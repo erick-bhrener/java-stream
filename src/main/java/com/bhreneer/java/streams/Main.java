@@ -24,16 +24,45 @@ public class Main {
         empList.add(new Employee(9, "stv", 25, 160L, "M", "IT", "Blore", 2010));
 
         StreamService streamService = new StreamService();
+        System.out.println(System.lineSeparator());
         streamService.groupEmployeesByCity(empList);
+        System.out.println(System.lineSeparator());
         streamService.groupEmployeesByAge(empList);
+        System.out.println(System.lineSeparator());
         streamService.countEmployeesByGender(empList);
+        System.out.println(System.lineSeparator());
         streamService.printAllDepartments(empList);
+        System.out.println(System.lineSeparator());
         streamService.findEmployeesOlderThan28(empList);
+        System.out.println(System.lineSeparator());
         streamService.findMaxAge(empList);
+        System.out.println(System.lineSeparator());
         streamService.findAverageAgeByGender(empList);
+        System.out.println(System.lineSeparator());
         streamService.findNumberOfEmployeesByDepartment(empList);
+        System.out.println(System.lineSeparator());
         streamService.findOldestEmployee(empList);
+        System.out.println(System.lineSeparator());
         streamService.findYoungestFemale(empList);
-
+        System.out.println(System.lineSeparator());
+        streamService.findEmployeesWithAgeGreaterOrLessThan30(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findDepartmentWithMoreEmployees(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findAnyEmployeeFromHR(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findDepartmentWithMoreThan3Employees(empList);
+        System.out.println(System.lineSeparator());
+        streamService.listDepartmentDistinct(empList);
+        System.out.println(System.lineSeparator());
+        streamService.printEmployeesFromCityOrdered(empList,"Blore");
+        System.out.println(System.lineSeparator());
+        streamService.countTotalEmployees(empList);
+        System.out.println(System.lineSeparator());
+        streamService.countEmployeesByDepartment(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findDepartmentWithMostEmployees(empList);
+        System.out.println(System.lineSeparator());
+        streamService.listEmployeeSortedByAgeAndName(empList);
     }
 }

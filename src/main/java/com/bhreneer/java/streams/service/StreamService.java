@@ -51,11 +51,83 @@ public class StreamService {
 
     public void findOldestEmployee(List<Employee> list) {
         Optional<Employee> oldestEmployee = list.stream().max(Comparator.comparingInt(Employee::getAge));
-        System.out.println("#> Oldest employee: " + System.lineSeparator() + oldestEmployee.get());
+        oldestEmployee.ifPresent(employee -> System.out.println("#> Oldest employee: " + System.lineSeparator() + employee));
     }
 
     public void findYoungestFemale(List<Employee> list) {
-        Optional<Employee> youngestEmploee = list.stream().filter(employee -> employee.getGender().equals("F")).min(Comparator.comparingInt(Employee::getAge));
-        System.out.println("#> Youngest female employee: " + System.lineSeparator() + youngestEmploee.get());
+        Optional<Employee> youngestEmployee = list.stream().filter(employee -> employee.getGender().equals("F")).min(Comparator.comparingInt(Employee::getAge));
+        youngestEmployee.ifPresent(employee -> System.out.println("#> Youngest female employee: " + System.lineSeparator() + employee));
+    }
+
+    public void findEmployeesWithAgeGreaterOrLessThan30(List<Employee> list) {
+        Map<Boolean, List<Employee>> mapEmployees = list.stream().collect(Collectors.partitioningBy(employee -> employee.getAge() > 30));
+        mapEmployees.keySet().forEach(key -> {
+            if(Boolean.TRUE.equals(key)) {
+                System.out.println("#> Employees older than 30: " + System.lineSeparator() + mapEmployees.get(true));
+            } else {
+                System.out.println("#> Employees with less than 30: " + System.lineSeparator() + mapEmployees.get(key));
+            }
+        });
+    }
+
+    public void findDepartmentWithMoreEmployees(List<Employee> list) {
+        Map.Entry<String, Long> mapDepartment = list.stream().collect(Collectors.groupingBy(Employee::getDeptName, Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue()).get();
+
+        System.out.println("#> Department with more employees: " + mapDepartment.getKey());
+    }
+
+    public void findAnyEmployeeFromHR(List<Employee> list) {
+        Optional<Employee> employeeFromHR = list.stream().filter(employee -> employee.getDeptName().equals("HR")).findAny();
+        employeeFromHR.ifPresent(employee -> System.out.println("#> Employee from HR: " + System.lineSeparator() + employee));
+    }
+
+    public void findDepartmentWithMoreThan3Employees(List<Employee> list) {
+        List<String> listDepartment = list.stream().collect(Collectors.groupingBy(Employee::getDeptName, Collectors.counting()))
+                .entrySet().stream().filter(entry -> entry.getValue() > 3).map(Map.Entry::getKey).collect(Collectors.toList());
+        System.out.println("#> List of departments with more than 3 employees: ");
+        listDepartment.forEach(System.out::println);
+    }
+
+    public void listDepartmentDistinct(List<Employee> list) {
+        List<String> listOfDepartment = list.stream().map(Employee::getDeptName).distinct().collect(Collectors.toList());
+        System.out.println("#> List of departments: ");
+        listOfDepartment.forEach(System.out::println);
+    }
+
+    public void printEmployeesFromCityOrdered(List<Employee> list, String city) {
+        List<String> listEmployeeFromCity = list.stream()
+                .filter(employee -> employee.getCity().equals(city))
+                .sorted(Comparator.comparing(Employee::getName))
+                .map(Employee::getName)
+                .collect(Collectors.toList());
+        System.out.println("#> Employees from " + city + ":");
+        listEmployeeFromCity.forEach(System.out::println);
+    }
+
+    public void countTotalEmployees(List<Employee> list) {
+        long totalEmployee = list.stream().count();
+        System.out.println("#> Total employees: " + totalEmployee);
+    }
+
+    public void countEmployeesByDepartment(List<Employee> list) {
+        Map<String, Long> mapDepartment = list.stream().collect(Collectors.groupingBy(Employee::getDeptName, Collectors.counting()));
+        System.out.println("#> Number of employees by department: " + System.lineSeparator() + mapDepartment);
+    }
+
+    public void findDepartmentWithMostEmployees(List<Employee> list) {
+        Optional<Map.Entry<String, Long>> mapDepartment = list.stream().collect(Collectors.groupingBy(Employee::getDeptName, Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue());
+        mapDepartment.ifPresent(entry -> System.out.println("#> Department with most employees: " + entry.getKey()));
+    }
+
+    public void listEmployeeSortedByAgeAndName(List<Employee> list) {
+        Comparator<Employee> ageComparator = Comparator.comparing(Employee::getAge);
+        Comparator<Employee> nameComparator = Comparator.comparing(Employee::getName);
+        List<Employee> listOrdered = list.stream()
+                .sorted(ageComparator.thenComparing(nameComparator))
+                .collect(Collectors.toList());
+        System.out.println("#> Employess ordered by age, then name: ");
+        listOrdered.forEach(System.out::println);
     }
 }
