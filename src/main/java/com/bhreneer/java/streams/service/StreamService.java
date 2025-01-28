@@ -1,7 +1,10 @@
 package com.bhreneer.java.streams.service;
 
 import com.bhreneer.java.streams.domain.Employee;
+import com.bhreneer.java.streams.util.PrintUtils;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -129,5 +132,122 @@ public class StreamService {
                 .collect(Collectors.toList());
         System.out.println("#> Employess ordered by age, then name: ");
         listOrdered.forEach(System.out::println);
+    }
+
+    public void findTheMostExperiencedEmployee(List<Employee> list) {
+        Optional<Employee> mostExperienced = list.stream().sorted(Comparator.comparingInt(Employee::getYearOfJoining)).findFirst();
+        mostExperienced.ifPresent(employee ->
+                System.out.println("#> Most experienced employee: " + System.lineSeparator() + employee)
+        );
+    }
+
+    public void findTheMostExperiencedEmployeeV2(List<Employee> list) {
+        Optional<Employee> mostExperienced = list.stream().min(Comparator.comparingInt(Employee::getYearOfJoining));
+        mostExperienced.ifPresent(employee ->
+                System.out.println("#> Most experienced employee V2: " + System.lineSeparator() + employee)
+        );
+    }
+
+    public void findAverageAndTotalSalary(List<Employee> list) {
+        DoubleSummaryStatistics salaryStatistics = list.stream().collect(Collectors.summarizingDouble(Employee::getYearOfJoining));
+
+        System.out.println("#> Average salary: " + PrintUtils.formatDouble(salaryStatistics.getAverage()));
+        System.out.println("#> Total salary: " + salaryStatistics.getSum());
+    }
+
+    public void findAverageSalaryByDepartment(List<Employee> list) {
+        Map<String, Double> mapSalary = list.stream().collect(Collectors.groupingBy(Employee::getDeptName, Collectors.averagingDouble(Employee::getSalary)));
+        System.out.println("#> Average salary by department: " + System.lineSeparator() + mapSalary);
+    }
+
+    public void findHighestSalary(List<Employee> list) {
+        Optional<Employee> highestSalary = list.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed()).findFirst();
+        highestSalary.ifPresent(employee -> System.out.println("#> Highest salary: " + System.lineSeparator() + employee));
+    }
+
+    public void findHighestSalaryV2(List<Employee> list) {
+        Optional<Employee> employeeOptional = list.stream().max(Comparator.comparingDouble(Employee::getSalary));
+        employeeOptional.ifPresent(employee -> System.out.println("#> Highest salary V2: " + System.lineSeparator() + employee));
+    }
+
+    public void findSecondHighestSalary(List<Employee> list) {
+        Optional<Employee> employeeOptional = list.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed()).skip(1).findFirst();
+        employeeOptional.ifPresent(employee -> System.out.println("#> Second highest salary: " + System.lineSeparator() + employee));
+    }
+
+    public void findNthHighestSalary(List<Employee> list, int n) {
+        Integer finalN = n;
+        if(Integer.compare(finalN, list.size()) > 0) finalN = list.size();
+        Optional<Employee> employeeOptional = list.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed()).skip(finalN-1).findFirst();
+        if(employeeOptional.isPresent()) {
+            System.out.println("#> The " + finalN + "th highest salary: " + System.lineSeparator() + employeeOptional.get());
+        }
+    }
+
+    public void findHighestSalaryByGender(List<Employee> list) {
+        Map<String, Optional<Employee>> mapSalaryByGender = list.stream().collect(Collectors.groupingBy(Employee::getGender, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+        System.out.println("#> Highest salary by gender: " + System.lineSeparator() + mapSalaryByGender);
+    }
+
+    public void findLowestSalaryByGender(List<Employee> list) {
+        Map<String, Optional<Employee>> mapSalaryByGender = list.stream().collect(Collectors.groupingBy(Employee::getGender, Collectors.minBy((e1,e2) -> (int) (e1.getSalary() - e2.getSalary()))));
+        System.out.println("#> Lowest salary by gender: " + System.lineSeparator() + mapSalaryByGender);
+    }
+
+    public void listSalaryASC(List<Employee> list) {
+        List<Employee> sortedASC = list.stream().sorted(Comparator.comparingDouble(Employee::getSalary)).collect(Collectors.toList());
+        System.out.println("#> Employees list ASC by Salary: ");
+        sortedASC.forEach(System.out::println);
+    }
+
+    public void listSalaryDESC(List<Employee> list) {
+        List<Employee> sortedDESC = list.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed()).collect(Collectors.toList());
+        System.out.println("#> Employees list DESC by Salary: ");
+        sortedDESC.forEach(System.out::println);
+    }
+
+    public void findHighestSalaryByDepartment(List<Employee> list) {
+        Map<String, Optional<Employee>> mapSalary = list.stream()
+                .collect(Collectors.groupingBy(Employee::getDeptName,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                empList -> empList.stream()
+                                        .max(Comparator.comparingDouble(Employee::getSalary))
+                        )
+                )
+        );
+        System.out.println("#> Highest salary by department: " + System.lineSeparator() + mapSalary);
+    }
+
+    public void listEmployeeByDepartmentASC(List<Employee> list) {
+        Map<String, List<Employee>> mapEmployeeASC = list.stream()
+                .collect(Collectors.groupingBy(Employee::getDeptName,
+                        Collectors.collectingAndThen(Collectors.toList(),
+                                empList -> empList.stream()
+                                        .sorted(Comparator.comparingDouble(Employee::getSalary))
+                                        .collect(Collectors.toList())
+                        )
+                ));
+        System.out.println("#> Employees by department sorted by salary ASC: ");
+        mapEmployeeASC.forEach((department, employees) -> {
+            System.out.println(department);
+            employees.forEach(System.out::println);
+        });
+    }
+
+    public void listEmployeeByDepartmentDESC(List<Employee> list) {
+        Map<String, List<Employee>> mapEmployeeDESC = list.stream()
+                .collect(Collectors.groupingBy(Employee::getDeptName,
+                        Collectors.collectingAndThen(Collectors.toList(),
+                                employees -> employees.stream()
+                                        .sorted(Comparator.comparingDouble(Employee::getSalary))
+                                        .collect(Collectors.toList()))
+                )
+        );
+        System.out.println("#> Employees sorted by salary DESC by department: ");
+        mapEmployeeDESC.forEach((department, employees) -> {
+            System.out.println("Department: " + department);
+            employees.forEach(System.out::println);
+        });
     }
 }

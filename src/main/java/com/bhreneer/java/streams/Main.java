@@ -64,5 +64,33 @@ public class Main {
         streamService.findDepartmentWithMostEmployees(empList);
         System.out.println(System.lineSeparator());
         streamService.listEmployeeSortedByAgeAndName(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findTheMostExperiencedEmployee(empList);
+        streamService.findTheMostExperiencedEmployeeV2(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findAverageAndTotalSalary(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findAverageSalaryByDepartment(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findHighestSalary(empList);
+        streamService.findHighestSalaryV2(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findSecondHighestSalary(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findNthHighestSalary(empList, 10);
+        System.out.println(System.lineSeparator());
+        streamService.findHighestSalaryByGender(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findLowestSalaryByGender(empList);
+        System.out.println(System.lineSeparator());
+        streamService.listSalaryASC(empList);
+        System.out.println(System.lineSeparator());
+        streamService.listSalaryDESC(empList);
+        System.out.println(System.lineSeparator());
+        streamService.findHighestSalaryByDepartment(empList);
+        System.out.println(System.lineSeparator());
+        streamService.listEmployeeByDepartmentASC(empList);
+        System.out.println(System.lineSeparator());
+        streamService.listEmployeeByDepartmentDESC(empList);
     }
 }
